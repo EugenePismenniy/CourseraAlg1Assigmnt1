@@ -3,11 +3,9 @@ import java.util.Arrays;
 
 public class Percolation {
     
+    /** true - free, false - blocked */
+    private boolean[][] grid;
     
-    
-    private enum GridValue {EMPTY, FULL, BLOCKED};
-    
-    private GridValue[][] grid;
     private WeightedQuickUnionUF uf;
     
     public Percolation(int N) // create N-by-N grid, with all sites blocked
@@ -17,35 +15,33 @@ public class Percolation {
 	}
 	
 	this.uf = new WeightedQuickUnionUF(N * N);
-	this.grid = new GridValue[N][N];
+	this.grid = new boolean[N][N];
 	
-	for (int i = 1; i <= N; i++) {
-	    for (int j = 1; j <= N; j++) {
-		set(i, j, GridValue.BLOCKED);
-	    }
-	}
+//	for (int i = 1; i <= N; i++) {
+//	    for (int j = 1; j <= N; j++) {
+//		set(i, j, false);
+//	    }
+//	}
     }
     
 
     
-
-    public void open(int i, int j) // open site (row i, column j) if it is not
-				   // open already
-    {
+    // open site (row i, column j) if it is not open already
+    public void open(int i, int j) { 
 	throwExceptionIfNotValidIndex(i,j);
-	set(i, j, GridValue.EMPTY);
+	set(i, j, true);
     }
 
     public boolean isOpen(int i, int j) // is site (row i, column j) open?
     {
 	throwExceptionIfNotValidIndex(i,j);
-	return get(i, j) == GridValue.EMPTY;
+	return get(i, j);
     }
 
     public boolean isFull(int i, int j) // is site (row i, column j) full?
     {
 	throwExceptionIfNotValidIndex(i,j);
-	return get(i, j) == GridValue.FULL;
+	return false;
     }
 
     public boolean percolates() // does the system percolate?
@@ -62,11 +58,11 @@ public class Percolation {
 	    throw new IndexOutOfBoundsException(); 
     }
     
-    private void set(int i, int j, GridValue val) {
+    private void set(int i, int j, boolean val) {
 	grid[i-1][j-1] = val;
     }
     
-    private GridValue get(int i, int j) {
+    private boolean get(int i, int j) {
 	return grid[i-1][j-1];
     }
     
