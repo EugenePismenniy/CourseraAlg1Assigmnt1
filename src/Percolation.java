@@ -4,8 +4,8 @@ public class Percolation {
     private final int N;
     private WeightedQuickUnionUF uf;
 
-    public Percolation(int N) // create N-by-N grid, with all sites blocked
-    {
+    // create N-by-N grid, with all sites blocked
+    public Percolation(int N) {
         if (N <= 0) 
             throw new IllegalArgumentException();
 
@@ -19,7 +19,7 @@ public class Percolation {
         throwExceptionIfNotValidIndex(i, j);
         set(i, j, true);
         
-        int q = xyTo1D(i, j);
+        int q = xyTo1D(i, j);        
         
         int p = getCellSide(i > 1, i - 1, j); // top
         tryConnect(p, q);
@@ -34,14 +34,14 @@ public class Percolation {
         tryConnect(p, q);
     }
 
-    public boolean isOpen(int i, int j) // is site (row i, column j) open?
-    {
+    // is site (row i, column j) open?
+    public boolean isOpen(int i, int j) { 
         throwExceptionIfNotValidIndex(i, j);
         return get(i, j);
     }
-
-    public boolean isFull(int i, int j) // is site (row i, column j) full?
-    {
+    
+    // is site (row i, column j) full?
+    public boolean isFull(int i, int j) { 
         throwExceptionIfNotValidIndex(i, j);
         
         int p = xyTo1D(i, j);    
@@ -56,15 +56,22 @@ public class Percolation {
         return false;
     }
 
-    public boolean percolates() // does the system percolate?
-    {
-        for (int j = 1; j <= N; j++) {            
-            int p = xyTo1D(N, j);
-            int q = xyTo1D(1, j);
-            
-            if (uf.connected(p, q)) 
-        	return true;
-        }
+    // does the system percolate?
+    public boolean percolates() {
+	
+	for (int i = 1; i <= N; i++) {
+	    if (isOpen(N, i)) {
+		for (int j = 1; j <= N; j++) {
+		    if (isOpen(1, j)) {
+			int p = xyTo1D(N, i);
+			int q = xyTo1D(1, j);
+
+			if (uf.connected(p, q))
+			    return true;
+		    }
+		}
+	    }
+	}
         return false;
     }
 
