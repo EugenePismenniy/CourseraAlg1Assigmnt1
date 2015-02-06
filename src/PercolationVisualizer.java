@@ -17,11 +17,14 @@
  ****************************************************************************/
 
 import java.awt.Font;
+import java.util.concurrent.TimeUnit;
 
 public class PercolationVisualizer {
 
     // delay in miliseconds (controls animation speed)
-    private static final int DELAY = 500;
+    private static final int DELAY = 100;
+    
+    private static boolean isPercolations = false;
 
     // draw N-by-N percolation system
     public static void draw(Percolation perc, int N) {
@@ -53,13 +56,19 @@ public class PercolationVisualizer {
         StdDraw.setFont(new Font("SansSerif", Font.PLAIN, 12));
         StdDraw.setPenColor(StdDraw.BLACK);
         StdDraw.text(.25*N, -N*.025, opened + " open sites");
-        if (perc.percolates()) StdDraw.text(.75*N, -N*.025, "percolates");
-        else                   StdDraw.text(.75*N, -N*.025, "does not percolate");
+	if (perc.percolates()) {
+	    StdDraw.text(.75 * N, -N * .025, "percolates");
+	    isPercolations = true;
+	    System.out.println("open sites percolates");
+	} else {
+	    StdDraw.text(.75 * N, -N * .025, "does not percolate");
+	    System.out.println("open sites does not percolate");
+	}
 
     }
 
     public static void main(String[] args) {
-        In in = new In("percolation/input5.txt");      // input file
+        In in = new In("percolation/input10.txt");      // input file
         int N = in.readInt();         // N-by-N percolation system
 
         // turn on animation mode
@@ -75,6 +84,12 @@ public class PercolationVisualizer {
             perc.open(i, j);
             draw(perc, N);
             StdDraw.show(DELAY);
+            
+            if(isPercolations) {
+        	try {
+		    TimeUnit.SECONDS.sleep(5);
+		} catch (InterruptedException e) {}
+            }
         }
     }
 }
