@@ -16,8 +16,6 @@ public class PercolationStats {
 
         for (int k = 0; k < T; k++) {
 
-
-
             Percolation p = new Percolation(N);
             int x = 0;
 
@@ -69,7 +67,7 @@ public class PercolationStats {
 
     public static void main(String[] args) {
 
-        PercolationStats ps = new PercolationStats(2, 10000);
+        PercolationStats ps = new PercolationStats(200, 100);
 
         System.out.println("mean = " + ps.mean());
         System.out.println("stddev = " + ps.stddev());

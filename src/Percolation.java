@@ -1,6 +1,7 @@
+
 public class Percolation {
 
-    private boolean[][] grid; // true - free, false - blocked
+    private boolean[][] grid; // false - blocked, true - open
     private final int N;
     private WeightedQuickUnionUF uf;
 
@@ -10,7 +11,7 @@ public class Percolation {
             throw new IllegalArgumentException();
 
         this.N = N;
-        this.uf = new WeightedQuickUnionUF(N * N);
+        this.uf = new WeightedQuickUnionUF(N * N + 2); // + 2 virtual nodes
         this.grid = new boolean[N][N];
     }
 
@@ -19,13 +20,22 @@ public class Percolation {
         throwExceptionIfNotValidIndex(i, j);
         set(i, j, true);
 
+        int p;
         int q = xyTo1D(i, j);
 
-        int p = getCellSide(i > 1, i - 1, j); // top
-        tryConnect(p, q);
+        if (i == 1) {
+            uf.union(q, 0); // union with top virtual node
+        } else {
+            p = getCellSide(i > 1, i - 1, j); // top
+            tryConnect(p, q);
+        }
 
-        p = getCellSide(i < N, i + 1, j); // bottom
-        tryConnect(p, q);
+        if (i == N) {
+            uf.union(q, N * N + 1); // union with bottom virtual node
+        } else {
+            p = getCellSide(i < N, i + 1, j); // bottom
+            tryConnect(p, q);
+        }
 
         p = getCellSide(j > 1, i, j - 1); // left
         tryConnect(p, q);
@@ -44,35 +54,17 @@ public class Percolation {
     public boolean isFull(int i, int j) {
         throwExceptionIfNotValidIndex(i, j);
 
-        int p = xyTo1D(i, j);
-
-        for (int k = 1; k <= N; k++) {
-            if (isOpen(1, k)) {
-                int q = xyTo1D(1, k);
-                if (uf.connected(p, q))
-                    return true;
-            }
+        if (isOpen(i, j)) {
+            int p = xyTo1D(i, j);
+            return uf.connected(p, 0);
+        } else {
+            return false;
         }
-        return false;
     }
 
     // does the system percolate?
     public boolean percolates() {
-
-        for (int i = 1; i <= N; i++) {
-            if (isOpen(N, i)) {
-                for (int j = 1; j <= N; j++) {
-                    if (isOpen(1, j)) {
-                        int p = xyTo1D(N, i);
-                        int q = xyTo1D(1, j);
-
-                        if (uf.connected(p, q))
-                            return true;
-                    }
-                }
-            }
-        }
-        return false;
+        return uf.connected(N * N + 1, 0);
     }
 
     private void throwExceptionIfNotValidIndex(int i, int j) {
@@ -89,7 +81,7 @@ public class Percolation {
     }
 
     private int xyTo1D(int i, int j) {
-        return N * (i - 1) + (j - 1);
+        return N * (i - 1) + j;
     }
 
     private int getCellSide(boolean condition, int i, int j) {
@@ -102,7 +94,12 @@ public class Percolation {
     }
 
     private void tryConnect(int p, int q) {
-        if (p >= 0 && !uf.connected(p, q))
+        if (p >= 0 && !uf.connected(p, q)) {
             uf.union(p, q);
+        }
+    }
+
+    public static void main(String[] args) {
+
     }
 }
