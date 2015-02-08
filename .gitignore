@@ -2,3 +2,7 @@ bin
 *.*~
 *.class
 target
+.idea
+.idea/*
+*.iml
+*.zip
